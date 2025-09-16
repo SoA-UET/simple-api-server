@@ -1,6 +1,6 @@
 import { Prop, Schema } from "@nestjs/mongoose";
 import { Document } from "mongoose";
-import { createMongoSchema } from "src/common/decorators/mongo-schema";
+import { createMongoSchema } from "src/common/utils/mongo-schema.util";
 
 @Schema()
 export class User {
