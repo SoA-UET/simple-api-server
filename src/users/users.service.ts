@@ -3,6 +3,7 @@ import { InjectModel } from "@nestjs/mongoose";
 import { User, UserDocument } from "./user.schema";
 import { Model } from "mongoose";
 import { CreateUserDto } from "./dto/create-user.dto";
+import { UpdateUserDto } from "./dto/update-user.dto";
 import * as bcrypt from 'bcrypt';
 import { UserDto } from "./dto/user.dto";
 import { plainToInstance } from "class-transformer";
@@ -26,5 +27,27 @@ export class UsersService {
             hashed_password: hashedPassword,
         });
         return newUser.save();
+    }
+
+    async update(id: string, updateUserDto: UpdateUserDto): Promise<UserDto | null> {
+        const updateData: any = { ...updateUserDto };
+
+    if (updateUserDto.password) {
+        updateData.hashed_password = await bcrypt.hash(updateUserDto.password, PASSWORD_HASH_ROUNDS);
+        delete updateData.password;
+    }
+
+    return this.userModel.findByIdAndUpdate(id, updateData, { new: true }).exec();
+    }
+
+    async patch(id: string, updateUserDto: UpdateUserDto): Promise<UserDto | null> {
+        const updateData: any = { ...updateUserDto };
+
+        if (updateUserDto.password) {
+            updateData.hashed_password = await bcrypt.hash(updateUserDto.password, PASSWORD_HASH_ROUNDS);
+            delete updateData.password;
+        }
+
+        return this.userModel.findByIdAndUpdate(id, updateData, { new: true }).exec();
     }
 }
