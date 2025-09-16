@@ -2,6 +2,13 @@ import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ClassSerializerInterceptor, INestApplication, ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { MongoExceptionFilter } from './common/filters/mongo-exception.filter';
+
+function configureGlobalFilters(app: INestApplication<any>) {
+  app.useGlobalFilters(
+    new MongoExceptionFilter(),
+  );
+}
 
 function configureSwagger(app: INestApplication<any>) {
   // Swagger config
@@ -25,6 +32,7 @@ function configureApp(app: INestApplication<any>) {
   configureClassSerializer(app);
   app.useGlobalPipes(new ValidationPipe());
   configureSwagger(app);
+  configureGlobalFilters(app);
 }
 
 async function bootstrap() {
