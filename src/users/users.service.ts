@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { User, UserDocument } from "./user.schema";
-import { Model } from "mongoose";
+import { Model, isValidObjectId } from "mongoose";
 import { CreateUserDto } from "./dto/create-user.dto";
 import * as bcrypt from 'bcrypt';
 import { UserDto } from "./dto/user.dto";
@@ -18,6 +18,14 @@ export class UsersService {
     async findAll(): Promise<UserDto[]> {
         return await this.userModel.find().exec();
     }
+
+    async findById(id: string): Promise<UserDto | null> {
+       // Validate ObjectId format using mongoose's built-in validator
+       if (!isValidObjectId(id)) {
+           return null;
+       }
+       return await this.userModel.findById(id).exec();
+   }
 
     async create(createUserDto: CreateUserDto) {
         const hashedPassword = await bcrypt.hash(createUserDto.password, PASSWORD_HASH_ROUNDS);
