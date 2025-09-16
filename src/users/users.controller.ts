@@ -1,9 +1,10 @@
-import { Body, ClassSerializerInterceptor, Controller, Get, Post, SerializeOptions, UseInterceptors } from "@nestjs/common";
+import { Body, ClassSerializerInterceptor, Controller, Get, Post, Delete, Param, SerializeOptions, UseInterceptors } from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { UserDto } from "./dto/user.dto";
 import { CreateUserDto } from "./dto/create-user.dto";
-import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { ApiOperation, ApiResponse, ApiTags, ApiParam } from "@nestjs/swagger";
 import { OtherApiResponses } from "src/common/decorators/other-api-responses.decorator";
+import { DeleteUserDto } from "./dto/delete-user.dto";
 
 @ApiTags('users')
 @Controller('users')
@@ -32,5 +33,15 @@ export class UsersController {
     async create(@Body() createUserDto: CreateUserDto) {
         const newUser = await this.usersService.create(createUserDto);
         return newUser;
+    }
+
+    @Delete(":id")
+    @ApiOperation({ summary: "Xóa user theo id." })
+    @ApiParam({ name: "id", description: "Id của user", type: String })
+    @ApiResponse({ status: 200, description: "Xóa thành công" })
+    @OtherApiResponses()
+    async deleteUser(@Param("id") id: string) {
+        const dto = new DeleteUserDto(id);
+        return this.usersService.deleteUserById(dto);
     }
 }
