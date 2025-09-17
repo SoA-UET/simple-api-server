@@ -5,8 +5,9 @@ import { CreateUserDto } from "./dto/create-user.dto";
 import { ApiOperation, ApiResponse, ApiTags, ApiParam } from "@nestjs/swagger";
 import { OtherApiResponses } from "src/common/decorators/other-api-responses.decorator";
 import { DeleteUserDto } from "./dto/delete-user.dto";
-import { UpdateUserDto } from "./dto/update-user.dto";
+import { PutUserDto } from "./dto/put-user.dto";
 import { ParseObjectIdPipe } from "@nestjs/mongoose";
+import { PatchUserDTO } from "./dto/patch-user-dto";
 
 @ApiTags('users')
 @Controller('users')
@@ -61,8 +62,8 @@ export class UsersController {
     @ApiResponse({ status: 200, description: "Cập nhật thành công", type: UserDto })
     
     @OtherApiResponses()
-    update(@Param('id', ParseObjectIdPipe) id: string, @Body() updateUserDto: UpdateUserDto) {
-        return this.usersService.update(id, updateUserDto);
+    put(@Param('id', ParseObjectIdPipe) id: string, @Body() putUserDto: PutUserDto) {
+        return this.usersService.put(id, putUserDto);
     }
 
     @Patch(':id')
@@ -72,8 +73,8 @@ export class UsersController {
     @ApiOperation({ summary: "Cập nhật một phần thông tin người dùng." })
     @ApiResponse({ status: 200, description: "Cập nhật thành công", type: UserDto })
     @OtherApiResponses()
-    patch(@Param('id', ParseObjectIdPipe) id: string, @Body() updateUserDto: UpdateUserDto) {
-        return this.usersService.patch(id, updateUserDto);
+    patch(@Param('id', ParseObjectIdPipe) id: string, @Body() patchUserDto: PatchUserDTO) {
+        return this.usersService.patch(id, patchUserDto);
     }
 
     @Delete(":id")

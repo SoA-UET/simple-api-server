@@ -4,9 +4,10 @@ import { InjectModel } from "@nestjs/mongoose";
 import { User, UserDocument } from "./user.schema";
 import { Model, isValidObjectId } from "mongoose";
 import { CreateUserDto } from "./dto/create-user.dto";
-import { UpdateUserDto } from "./dto/update-user.dto";
+import { PutUserDto } from "./dto/put-user.dto";
 import * as bcrypt from 'bcrypt';
 import { UserDto } from "./dto/user.dto";
+import { PatchUserDTO } from "./dto/patch-user-dto";
 
 const PASSWORD_HASH_ROUNDS = 10;
 
@@ -37,22 +38,22 @@ export class UsersService {
         return newUser.save();
     }
 
-    async update(id: string, updateUserDto: UpdateUserDto): Promise<UserDto | null> {
-        const updateData: any = { ...updateUserDto };
+    async put(id: string, putUserDto: PutUserDto): Promise<UserDto | null> {
+        const updateData: any = { ...putUserDto };
 
-    if (updateUserDto.password) {
-        updateData.hashed_password = await bcrypt.hash(updateUserDto.password, PASSWORD_HASH_ROUNDS);
+    if (putUserDto.password) {
+        updateData.hashed_password = await bcrypt.hash(putUserDto.password, PASSWORD_HASH_ROUNDS);
         delete updateData.password;
     }
 
     return this.userModel.findByIdAndUpdate(id, updateData, { new: true }).exec();
     }
 
-    async patch(id: string, updateUserDto: UpdateUserDto): Promise<UserDto | null> {
-        const updateData: any = { ...updateUserDto };
+    async patch(id: string, patchUserDto: PatchUserDTO): Promise<UserDto | null> {
+        const updateData: any = { ...patchUserDto };
 
-        if (updateUserDto.password) {
-            updateData.hashed_password = await bcrypt.hash(updateUserDto.password, PASSWORD_HASH_ROUNDS);
+        if (patchUserDto.password) {
+            updateData.hashed_password = await bcrypt.hash(patchUserDto.password, PASSWORD_HASH_ROUNDS);
             delete updateData.password;
         }
 
