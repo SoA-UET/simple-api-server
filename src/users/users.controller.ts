@@ -1,4 +1,4 @@
-import { Body, ClassSerializerInterceptor, Controller, Get, Post, Delete, Param, SerializeOptions, UseInterceptors } from "@nestjs/common";
+import { Body, ClassSerializerInterceptor, Controller, Get, Param, Post, Delete, SerializeOptions, UseInterceptors, NotFoundException } from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { UserDto } from "./dto/user.dto";
 import { CreateUserDto } from "./dto/create-user.dto";
@@ -23,6 +23,22 @@ export class UsersController {
         return this.usersService.findAll();
     }
 
+    @Get(':id')
+    @SerializeOptions({
+        type: UserDto
+    })
+    @ApiOperation({ summary: "Lấy thông tin người dùng theo ID." })
+    @ApiResponse({ status: 200, description: "Thành công", type: UserDto })
+    @ApiResponse({ status: 404, description: "Không tìm thấy người dùng" })
+    @OtherApiResponses()
+    async findById(@Param('id') id: string): Promise<UserDto> {
+        const user = await this.usersService.findById(id);
+        if (!user) {
+            throw new NotFoundException('Không tìm thấy người dùng với ID này');
+        }
+        return user;
+    }
+
     @Post()
     @SerializeOptions({
         type: UserDto
@@ -39,6 +55,7 @@ export class UsersController {
     @ApiOperation({ summary: "Xóa user theo id." })
     @ApiParam({ name: "id", description: "Id của user", type: String })
     @ApiResponse({ status: 200, description: "Xóa thành công" })
+    @ApiResponse({ status: 404, description: "Không tìm thấy người dùng" })
     @OtherApiResponses()
     async deleteUser(@Param("id") id: string) {
         const dto = new DeleteUserDto(id);
