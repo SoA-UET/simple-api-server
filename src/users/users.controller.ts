@@ -55,6 +55,7 @@ export class UsersController {
     @ApiOperation({ summary: "Xóa user theo id." })
     @ApiParam({ name: "id", description: "Id của user", type: String })
     @ApiResponse({ status: 200, description: "Xóa thành công" })
+    @ApiResponse({ status: 404, description: "Không tìm thấy người dùng" })
     @OtherApiResponses()
     async deleteUser(@Param("id") id: string) {
         const dto = new DeleteUserDto(id);

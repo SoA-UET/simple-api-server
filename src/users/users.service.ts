@@ -1,5 +1,5 @@
 import { DeleteUserDto } from "./dto/delete-user.dto";
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { User, UserDocument } from "./user.schema";
 import { Model, isValidObjectId } from "mongoose";
@@ -40,7 +40,7 @@ export class UsersService {
     async deleteUserById(deleteUserDto: DeleteUserDto) {
         const result = await this.userModel.findByIdAndDelete(deleteUserDto.id);
         if (!result) {
-            throw new Error("Không tìm thấy user với id đã cho");
+            throw new NotFoundException("Không tìm thấy user với id đã cho");
         }
         return { message: "Xóa thành công", id: deleteUserDto.id };
     }
