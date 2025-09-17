@@ -1,10 +1,13 @@
-import { Body, ClassSerializerInterceptor, Controller, Get, Param, Post, Delete, SerializeOptions, UseInterceptors, NotFoundException } from "@nestjs/common";
+import { Body, ClassSerializerInterceptor, Controller, Get, Param, Post, Put, Patch, Delete, SerializeOptions, UseInterceptors, NotFoundException } from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { UserDto } from "./dto/user.dto";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { ApiOperation, ApiResponse, ApiTags, ApiParam } from "@nestjs/swagger";
 import { OtherApiResponses } from "src/common/decorators/other-api-responses.decorator";
 import { DeleteUserDto } from "./dto/delete-user.dto";
+import { PutUserDto } from "./dto/put-user.dto";
+import { ParseObjectIdPipe } from "@nestjs/mongoose";
+import { PatchUserDTO } from "./dto/patch-user-dto";
 
 @ApiTags('users')
 @Controller('users')
@@ -49,6 +52,29 @@ export class UsersController {
     async create(@Body() createUserDto: CreateUserDto) {
         const newUser = await this.usersService.create(createUserDto);
         return newUser;
+    }
+
+    @Put(':id')
+    @SerializeOptions({
+        type: UserDto
+    })
+    @ApiOperation({ summary: "Cập nhật toàn bộ thông tin người dùng." })
+    @ApiResponse({ status: 200, description: "Cập nhật thành công", type: UserDto })
+    
+    @OtherApiResponses()
+    put(@Param('id', ParseObjectIdPipe) id: string, @Body() putUserDto: PutUserDto) {
+        return this.usersService.put(id, putUserDto);
+    }
+
+    @Patch(':id')
+    @SerializeOptions({
+        type: UserDto
+    })
+    @ApiOperation({ summary: "Cập nhật một phần thông tin người dùng." })
+    @ApiResponse({ status: 200, description: "Cập nhật thành công", type: UserDto })
+    @OtherApiResponses()
+    patch(@Param('id', ParseObjectIdPipe) id: string, @Body() patchUserDto: PatchUserDTO) {
+        return this.usersService.patch(id, patchUserDto);
     }
 
     @Delete(":id")
