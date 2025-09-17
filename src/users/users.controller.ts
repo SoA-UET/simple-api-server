@@ -1,10 +1,11 @@
-import { Body, ClassSerializerInterceptor, Controller, Get, Put, Patch, Post, SerializeOptions, UseInterceptors, Param } from "@nestjs/common";
+import { Body, ClassSerializerInterceptor, Controller, Get, Param, Post, Put, Patch, Delete, SerializeOptions, UseInterceptors, NotFoundException } from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { UserDto } from "./dto/user.dto";
 import { CreateUserDto } from "./dto/create-user.dto";
-import { UpdateUserDto } from "./dto/update-user.dto";
-import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { ApiOperation, ApiResponse, ApiTags, ApiParam } from "@nestjs/swagger";
 import { OtherApiResponses } from "src/common/decorators/other-api-responses.decorator";
+import { DeleteUserDto } from "./dto/delete-user.dto";
+import { UpdateUserDto } from "./dto/update-user.dto";
 import { ParseObjectIdPipe } from "@nestjs/mongoose";
 
 @ApiTags('users')
@@ -22,6 +23,22 @@ export class UsersController {
     @OtherApiResponses()
     findAll(): Promise<UserDto[]> {
         return this.usersService.findAll();
+    }
+
+    @Get(':id')
+    @SerializeOptions({
+        type: UserDto
+    })
+    @ApiOperation({ summary: "Lấy thông tin người dùng theo ID." })
+    @ApiResponse({ status: 200, description: "Thành công", type: UserDto })
+    @ApiResponse({ status: 404, description: "Không tìm thấy người dùng" })
+    @OtherApiResponses()
+    async findById(@Param('id') id: string): Promise<UserDto> {
+        const user = await this.usersService.findById(id);
+        if (!user) {
+            throw new NotFoundException('Không tìm thấy người dùng với ID này');
+        }
+        return user;
     }
 
     @Post()
@@ -57,5 +74,16 @@ export class UsersController {
     @OtherApiResponses()
     patch(@Param('id', ParseObjectIdPipe) id: string, @Body() updateUserDto: UpdateUserDto) {
         return this.usersService.patch(id, updateUserDto);
+    }
+
+    @Delete(":id")
+    @ApiOperation({ summary: "Xóa user theo id." })
+    @ApiParam({ name: "id", description: "Id của user", type: String })
+    @ApiResponse({ status: 200, description: "Xóa thành công" })
+    @ApiResponse({ status: 404, description: "Không tìm thấy người dùng" })
+    @OtherApiResponses()
+    async deleteUser(@Param("id") id: string) {
+        const dto = new DeleteUserDto(id);
+        return this.usersService.deleteUserById(dto);
     }
 }
