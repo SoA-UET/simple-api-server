@@ -19,7 +19,9 @@ function configureSwagger(app: INestApplication<any>) {
     .addBearerAuth() // optional, if you want JWT auth in docs
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/docs', app, document);
+  SwaggerModule.setup('api/docs', app, document, {
+    jsonDocumentUrl: '/api-json',
+  });
 }
 
 function configureClassSerializer(app: INestApplication<any>) {

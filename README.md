@@ -7,7 +7,8 @@
     - [Development with hot reload](#development-with-hot-reload)
     - [Production](#production)
     - [Run tests](#run-tests)
-  - [Viết code](#viết-code)
+  - [Chú ý khi viết code](#chú-ý-khi-viết-code)
+    - [Swagger API Docs](#swagger-api-docs)
     - [Directory Structure](#directory-structure)
     - [Modules](#modules)
   - [Tác giả](#tác-giả)
@@ -65,6 +66,8 @@ $ npm run test:cov
 ### Swagger API Docs
 
 Truy cập: <http://localhost:3000/api/docs>
+
+OpenAPI JSON: <http://localhost:3000/api-json>
 
 ### Directory Structure
 
