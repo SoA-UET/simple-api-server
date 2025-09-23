@@ -1,4 +1,4 @@
-import { Body, ClassSerializerInterceptor, Controller, Get, Param, Post, Put, Patch, Delete, SerializeOptions, UseInterceptors, NotFoundException } from "@nestjs/common";
+import { Body, ClassSerializerInterceptor, Controller, Get, Param, Post, Put, Patch, Delete, Head, SerializeOptions, UseInterceptors, NotFoundException, Res } from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { UserDto } from "./dto/user.dto";
 import { CreateUserDto } from "./dto/create-user.dto";
@@ -8,6 +8,7 @@ import { DeleteUserDto } from "./dto/delete-user.dto";
 import { PutUserDto } from "./dto/put-user.dto";
 import { ParseObjectIdPipe } from "@nestjs/mongoose";
 import { PatchUserDTO } from "./dto/patch-user-dto";
+import type { Response } from 'express';
 
 @ApiTags('users')
 @Controller('users')
@@ -86,5 +87,25 @@ export class UsersController {
     async deleteUser(@Param("id") id: string) {
         const dto = new DeleteUserDto(id);
         return this.usersService.deleteUserById(dto);
+    }
+
+    @Head(':id')
+    @ApiOperation({ summary: "Kiểm tra user theo ID có tồn tại không (HEAD method)" })
+    @ApiParam({ name: "id", description: "Id của user", type: String })
+    @ApiResponse({ status: 200, description: "User tồn tại" })
+    @ApiResponse({ status: 404, description: "User không tồn tại" })
+    @OtherApiResponses()
+    async headUser(@Param('id') id: string, @Res() res: Response): Promise<void> {
+        // HEAD method cho user cụ thể - kiểm tra existence
+        try {
+            const user = await this.usersService.findById(id);
+            if (user) {
+                res.status(200).send();
+            } else {
+                res.status(404).send();
+            }
+        } catch (error) {
+            res.status(404).send();
+        }
     }
 }
