@@ -9,4 +9,9 @@ export class AppController {
   getHello(): string {
     return this.appService.getHello();
   }
+
+  @Get("/500")
+  get500(): void {
+    throw new Error("Simulated server error");
+  }
 }
