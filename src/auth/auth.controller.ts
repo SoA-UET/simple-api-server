@@ -1,23 +1,31 @@
-import { Body, Controller, HttpCode, Post, SerializeOptions, UnauthorizedException } from '@nestjs/common';
+import { Body, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { UserDto } from 'src/users/dto/user.dto';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { OtherApiResponses } from 'src/common/decorators/other-api-responses.decorator';
 import { LoginUserDto } from './dto/login-user.dto';
 import { LoggedInUserDto } from './dto/logged-in-user.dto';
+import { MyController } from 'src/common/decorators/my-controller';
+import { MyPost } from 'src/common/decorators/routing/my-post.decorator';
 
-@Controller('auth')
+@MyController({
+    prefix: 'auth',
+})
 export class AuthController {
     constructor(private authService: AuthService) { }
 
-    @Post('login')
-    @HttpCode(200)
-    @SerializeOptions({
-        type: LoggedInUserDto
+    @MyPost({
+        path: 'login',
+        summary: 'Đăng nhập và nhận token JWT.',
+        response: {
+            status: 200,
+            description: 'Thành công',
+            type: LoggedInUserDto,
+        },
+        otherResponses: [
+            {
+                status: 401,
+                description: 'Email hoặc mật khẩu không đúng',
+            },
+        ],
     })
-    @ApiOperation({ summary: 'Đăng nhập và nhận token JWT.' })
-    @ApiResponse({ status: 200, description: 'Thành công', type: LoggedInUserDto })
-    @OtherApiResponses()
     async login(@Body() loginUserDto: LoginUserDto): Promise<LoggedInUserDto> {
         const user = await this.authService.validateUser(
             loginUserDto.email,
