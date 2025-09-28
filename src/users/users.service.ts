@@ -49,7 +49,11 @@ export class UsersService {
             delete updateData.password;
         }
 
-        return this.userModel.findByIdAndUpdate(id, updateData, { new: true }).exec();
+        const updatedRecord = await this.userModel.findByIdAndUpdate(id, updateData, { new: true }).exec();
+        if (!updatedRecord) {
+            throw new NotFoundException("Không tìm thấy user với id đã cho");
+        }
+        return updatedRecord;
     }
 
     async patch(id: string, patchUserDto: PatchUserDTO): Promise<UserDto | null> {
@@ -60,7 +64,11 @@ export class UsersService {
             delete updateData.password;
         }
 
-        return this.userModel.findByIdAndUpdate(id, updateData, { new: true }).exec();
+        const updatedRecord = await this.userModel.findByIdAndUpdate(id, updateData, { new: true }).exec();
+        if (!updatedRecord) {
+            throw new NotFoundException("Không tìm thấy user với id đã cho");
+        }
+        return updatedRecord;
     }
 
     async deleteUserById(deleteUserDto: DeleteUserDto) {

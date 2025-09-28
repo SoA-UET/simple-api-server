@@ -1,4 +1,4 @@
-import { Body, Param, NotFoundException } from "@nestjs/common";
+import { Body, Param, NotFoundException, Req, ForbiddenException } from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { UserDto } from "./dto/user.dto";
 import { CreateUserDto } from "./dto/create-user.dto";
@@ -81,11 +81,19 @@ export class UsersController {
             {
                 status: 404,
                 description: "Không tìm thấy người dùng",
+            },
+
+            {
+                status: 403,
+                description: "Bạn không có quyền cập nhật người dùng này (khi id trong JWT token không khớp với id trong param)",
             }
         ],
         jwtAuth: true,
     })
-    put(@Param('id', ParseObjectIdPipe) id: string, @Body() putUserDto: PutUserDto) {
+    put(@Param('id', ParseObjectIdPipe) id: string, @Body() putUserDto: PutUserDto, @Req() req: Request) {
+        if (req['user'] && req['user'].id != id) {
+            throw new ForbiddenException('Bạn không có quyền cập nhật người dùng này');
+        }
         return this.usersService.put(id, putUserDto);
     }
 
@@ -101,11 +109,18 @@ export class UsersController {
             {
                 status: 404,
                 description: "Không tìm thấy người dùng",
-            }
+            },
+            {
+                status: 403,
+                description: "Bạn không có quyền cập nhật người dùng này (khi id trong JWT token không khớp với id trong param)",
+            },
         ],
         jwtAuth: true,
     })
-    patch(@Param('id', ParseObjectIdPipe) id: string, @Body() patchUserDto: PatchUserDTO) {
+    patch(@Param('id', ParseObjectIdPipe) id: string, @Body() patchUserDto: PatchUserDTO, @Req() req: Request) {
+        if (req['user'] && req['user'].id != id) {
+            throw new ForbiddenException('Bạn không có quyền cập nhật người dùng này');
+        }
         return this.usersService.patch(id, patchUserDto);
     }
 
