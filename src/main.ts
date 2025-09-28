@@ -16,7 +16,17 @@ function configureSwagger(app: INestApplication<any>) {
     .setTitle('My API')
     .setDescription('Auto-generated API docs')
     .setVersion('1.0')
-    .addBearerAuth() // optional, if you want JWT auth in docs
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'JWT',
+        description: 'Nhập JWT token',
+        in: 'header',
+      },
+      'jwt',
+    )
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, document, {

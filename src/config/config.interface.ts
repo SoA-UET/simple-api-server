@@ -3,4 +3,5 @@ export interface Config {
   HOST: string;
   PORT: number;
   MONGODB_URI: string;
+  SECRET_KEY: string;
 }

@@ -7,4 +7,5 @@ export const validationSchema = Joi.object({
   HOST: Joi.string().default("localhost"),
   PORT: Joi.number().default(3000),
   MONGODB_URI: Joi.string().required(),
+  SECRET_KEY: Joi.string().min(64).required(),
 });
