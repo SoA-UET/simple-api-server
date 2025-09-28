@@ -7,6 +7,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { validateConfig } from './config/validate';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -36,6 +37,8 @@ import { APP_GUARD } from '@nestjs/core';
     }),
 
     UsersModule,
+
+    AuthModule,
   ],
 
   controllers: [AppController],

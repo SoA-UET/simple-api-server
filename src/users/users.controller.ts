@@ -8,6 +8,7 @@ import { DeleteUserDto } from "./dto/delete-user.dto";
 import { PutUserDto } from "./dto/put-user.dto";
 import { ParseObjectIdPipe } from "@nestjs/mongoose";
 import { PatchUserDTO } from "./dto/patch-user-dto";
+import { JwtAuth } from "src/common/decorators/jwt-auth.decorator";
 
 @ApiTags('users')
 @Controller('users')
@@ -54,6 +55,7 @@ export class UsersController {
         return newUser;
     }
 
+    @JwtAuth()
     @Put(':id')
     @SerializeOptions({
         type: UserDto
@@ -66,6 +68,7 @@ export class UsersController {
         return this.usersService.put(id, putUserDto);
     }
 
+    @JwtAuth()
     @Patch(':id')
     @SerializeOptions({
         type: UserDto
@@ -77,6 +80,7 @@ export class UsersController {
         return this.usersService.patch(id, patchUserDto);
     }
 
+    @JwtAuth()
     @Delete(":id")
     @ApiOperation({ summary: "Xóa user theo id." })
     @ApiParam({ name: "id", description: "Id của user", type: String })
