@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UsersService } from '../users/users.service';
-import { PASSWORD_HASH_ROUNDS } from 'src/utils/constants';
+import { PASSWORD_HASH_ROUNDS } from 'src/common/utils/constants';
 import { UserDocument } from 'src/users/user.schema';
 
 @Injectable()

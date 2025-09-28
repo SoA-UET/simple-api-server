@@ -8,7 +8,7 @@ import { PutUserDto } from "./dto/put-user.dto";
 import * as bcrypt from 'bcrypt';
 import { UserDto } from "./dto/user.dto";
 import { PatchUserDTO } from "./dto/patch-user-dto";
-import { PASSWORD_HASH_ROUNDS } from "src/utils/constants";
+import { PASSWORD_HASH_ROUNDS } from "src/common/utils/constants";
 
 @Injectable()
 export class UsersService {
@@ -26,6 +26,10 @@ export class UsersService {
             return null;
         }
         return await this.userModel.findById(id).exec();
+    }
+
+    async findByIdIn(ids: string[]): Promise<UserDocument[]> {
+        return await this.userModel.find({ _id: { $in: ids } }).exec();
     }
 
     async findByEmail(email: string): Promise<UserDocument | null> {
